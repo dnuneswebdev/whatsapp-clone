@@ -4,6 +4,7 @@ class WhatsAppController {
 
     this.elementsPrototype();
     this.loadElements();
+    this.initEvents();
   }
 
   loadElements() {
@@ -63,6 +64,37 @@ class WhatsAppController {
       return this.classList.contains(className)//retorna boolean se tem ou nao uma classe
     }
 
+  }
+
+  initEvents() {
+    this.el.myPhoto.on('click', e => {//abre o painel de editar o profile
+      this.closeAllLeftPanel();
+      this.el.panelEditProfile.show();
+      setTimeout(() => {//esse setTimeout evita problemas de transition com o CSS
+        this.el.panelEditProfile.addClass('open');
+      }, 100);   
+    });
+
+    this.el.btnNewContact.on('click', e => {//abre o painel de adicionar contato
+      this.closeAllLeftPanel();
+      this.el.panelAddContact.show();
+      setTimeout(() => {
+        this.el.panelAddContact.addClass('open');
+      }, 100);
+    });
+
+    this.el.btnClosePanelEditProfile.on('click', e => {//remove a class open do painel
+      this.el.panelEditProfile.removeClass('open');
+    });
+
+    this.el.btnClosePanelAddContact.on('click', e => {//remove a class open do painel
+      this.el.panelAddContact.removeClass('open');
+    });
+  }
+
+  closeAllLeftPanel() {//metodo que garante que sempre todas os paineis estarão fechados para evitar probelams de z-index
+    this.el.panelAddContact.hide();
+    this.el.panelEditProfile.hide();
   }
 
 
