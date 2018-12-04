@@ -15,6 +15,9 @@ class WhatsAppController {
     });
   }
 
+  //--------------------------------------------------
+  // PROTOTYPE
+  // --------------------------------------------------
   elementsPrototype() {
     Element.prototype.hide = function() {
       this.style.display = "none";
@@ -27,13 +30,13 @@ class WhatsAppController {
     }
 
     Element.prototype.toggle = function() {
-      this.style.display = (this.style.display === "none") ? 'block' : 'none';
+      this.style.display = !this.style.display;
       return this;
     }
 
-    Element.prototype.on = function(events, fn) {
-      events.split(' ').forEach(event => {
-        this.addEventListener(event, fn);
+    Element.prototype.on = function(events, fn) {//automatiza a criação dos eventos: 'click', 'mouseover', 'keyup', etc...
+      events.split(' ').forEach(event => {//se tiver multiplos eventos, separa cada um com o split e loopa 
+        this.addEventListener(event, fn);//adiciona o eventListener recebendo qual é o evento e a função
       });
       return this;
     }
@@ -74,14 +77,18 @@ class WhatsAppController {
        this.getForm().forEach((value, key) => {
          json[key] = value;
        });
-
+       console.log(json)
        return json
     }
+
+
 
   }
 
   initEvents() {
-    //////////////EVENTOS DE OPEN E CLOSE DOS PAINEIS ADD USER E EDIT PROFILE
+    // --------------------------------------------------
+    // EVENTOS DE OPEN E CLOSE DOS PAINEIS ADD USER E EDIT PROFILE
+    // --------------------------------------------------
     this.el.myPhoto.on('click', e => {//abre o painel de editar o profile
       this.closeAllLeftPanel();
       this.el.panelEditProfile.show();
@@ -106,7 +113,9 @@ class WhatsAppController {
       this.el.panelAddContact.removeClass('open');
     });
 
-    ////////////EVENTOS DE ADICIONAR FOTO DO USER E FORMDATA
+    // --------------------------------------------------
+    // EVENTOS DE ADICIONAR FOTO DO USER E FORMDATA
+    // --------------------------------------------------
     this.el.photoContainerEditProfile.on('click', e => {
       this.el.inputProfilePhoto.click();//força o click no <input type="file">
     });
@@ -125,9 +134,91 @@ class WhatsAppController {
     this.el.formPanelAddContact.on('submit', e => {
       e.preventDefault();
       let formData = new FormData(this.el.formPanelAddContact);//ja trata os campos e recupera os dados com base no 'name'
+    });
 
+    // --------------------------------------------------
+    // CONTACT LIST EVENTS
+    // --------------------------------------------------
+    this.el.contactsMessagesList.querySelectorAll('.contact-item').forEach(item => {//parent, pega cada contact e loopa com evento click
+      item.on('click', e => {
+        this.el.home.hide();//esconde a home
+        this.el.main.css({display: 'flex'});//mostra a tela de mensagem
+      });
+    });
 
-    })
+    // --------------------------------------------------
+    // MENU ANEXAR
+    // --------------------------------------------------
+    this.el.btnAttach.on('click', e => {
+      e.stopPropagation();//não executa outros eventos de niveis anteriores (parents)
+
+      this.el.menuAttach.toggleClass('open');
+      document.addEventListener('click', this.closeMenuAttach.bind(this));
+    });
+
+    this.el.btnAttachPhoto.on('click', e => {
+      this.el.inputPhoto.click();
+    });
+
+    this.el.inputPhoto.on('change', e => {
+      [...this.el.inputPhoto.files].forEach(file => {
+        console.log(file)
+      });
+    });
+
+    this.el.btnAttachCamera.on('click', e => {
+      this.closeAllMainPanel();
+      this.el.panelMessagesContainer.hide();
+      this.el.panelCamera.css({height: 'calc(100% - 120px)'});
+      this.el.panelCamera.addClass('open');
+    });
+
+    this.el.btnClosePanelCamera.on('click', e => {
+      this.closeAllMainPanel();
+      this.el.panelMessagesContainer.show();
+    });
+
+    this.el.btnTakePicture.on('click', e => {
+      console.log('abrir camera')
+    });
+
+    this.el.btnAttachDocument.on('click', e => {
+      this.closeAllMainPanel();
+      this.el.panelDocumentPreview.css({height: 'calc(100% - 120px)'});
+      this.el.panelDocumentPreview.addClass('open');
+    });
+
+    this.el.btnClosePanelDocumentPreview.on('click', e => {
+      this.closeAllMainPanel();
+      this.el.panelMessagesContainer.show();
+    });
+
+    this.el.btnSendDocument.on('click', e => {
+      console.log('send document')
+    });
+
+    this.el.btnAttachContact.on('click', e => {
+      this.el.modalContacts.show();
+    });
+
+    this.el.btnCloseModalContacts.on('click', e => {
+      this.el.modalContacts.hide();
+    });
+
+  }
+
+  // --------------------------------------------------
+  // CLOSE METHODS
+  // --------------------------------------------------
+  closeAllMainPanel() {
+    this.el.panelMessagesContainer.hide();
+    this.el.panelCamera.removeClass('open');
+    this.el.panelDocumentPreview.removeClass('open');
+  }
+
+  closeMenuAttach(e) {
+    document.removeEventListener('click', this.closeMenuAttach);
+    this.el.menuAttach.removeClass('open');
   }
 
   closeAllLeftPanel() {//metodo que garante que sempre todas os paineis estarão fechados para evitar probelams de z-index

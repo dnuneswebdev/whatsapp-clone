@@ -16088,10 +16088,14 @@ html[dir=rtl] ._2ICcy:after{
      transform: translateX(0px);
 }
  .menu-dropdown {
-     display:none;
+     opacity: 0;
+     -webkit-transition: 0.3s ease-in-out;
+     -moz-transition: 0.3s ease-in-out;
+     -o-transition: 0.3s ease-in-out;
+     transition: 0.3s ease-in-out;
 }
  .menu-dropdown.open {
-     display:block;
+     opacity: 1;
 }
  .btn-attach {
      opacity: 0;
