@@ -64,9 +64,24 @@ class WhatsAppController {
       return this.classList.contains(className)//retorna boolean se tem ou nao uma classe
     }
 
+    HTMLFormElement.prototype.getForm = function() {//cria um formData 
+      return new FormData(this)
+    }
+
+    HTMLFormElement.prototype.toJSON = function () {//passa o formData de qualquer formulario criado, e cria um objeto JSON
+       let json = {};
+
+       this.getForm().forEach((value, key) => {
+         json[key] = value;
+       });
+
+       return json
+    }
+
   }
 
   initEvents() {
+    //////////////EVENTOS DE OPEN E CLOSE DOS PAINEIS ADD USER E EDIT PROFILE
     this.el.myPhoto.on('click', e => {//abre o painel de editar o profile
       this.closeAllLeftPanel();
       this.el.panelEditProfile.show();
@@ -90,6 +105,29 @@ class WhatsAppController {
     this.el.btnClosePanelAddContact.on('click', e => {//remove a class open do painel
       this.el.panelAddContact.removeClass('open');
     });
+
+    ////////////EVENTOS DE ADICIONAR FOTO DO USER E FORMDATA
+    this.el.photoContainerEditProfile.on('click', e => {
+      this.el.inputProfilePhoto.click();//força o click no <input type="file">
+    });
+
+    this.el.inputNamePanelEditProfile.on('keypress', e => {
+      if(e.key === 'Enter') {
+        e.preventDefault();
+        this.el.btnSavePanelEditProfile.click();
+      }
+    });
+
+    this.el.btnSavePanelEditProfile.on('click', e => {
+      console.log(this.el.inputNamePanelEditProfile.innerHTML)//como é uma DIV e não um INPUT, não tem o .value
+    });
+
+    this.el.formPanelAddContact.on('submit', e => {
+      e.preventDefault();
+      let formData = new FormData(this.el.formPanelAddContact);//ja trata os campos e recupera os dados com base no 'name'
+
+
+    })
   }
 
   closeAllLeftPanel() {//metodo que garante que sempre todas os paineis estarão fechados para evitar probelams de z-index
