@@ -205,6 +205,36 @@ class WhatsAppController {
       this.el.modalContacts.hide();
     });
 
+    // --------------------------------------------------
+    // MICROPHONE EVENTS
+    // --------------------------------------------------
+    this.el.btnSendMicrophone.on('click', e => {
+      this.el.recordMicrophone.show();
+      this.el.btnSendMicrophone.hide();
+      this.startRecordMicrophoneTimer();
+    });
+
+    this.el.btnCancelMicrophone.on('click', e => {
+      this.closeRecordMicrophone()
+    });
+
+    this.el.btnFinishMicrophone.on('click', e => {
+      this.closeRecordMicrophone()
+    });
+
+
+  }
+
+
+  // --------------------------------------------------
+  // MICROPHONE TIMER METHOD
+  // --------------------------------------------------
+  startRecordMicrophoneTimer() {
+    let start = Date.now();//pega a hora atual
+
+    this._recordMicrophoneInterval = setInterval(() => {
+      this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
+    }, 1000);
   }
 
   // --------------------------------------------------
@@ -224,6 +254,12 @@ class WhatsAppController {
   closeAllLeftPanel() {//metodo que garante que sempre todas os paineis estarão fechados para evitar probelams de z-index
     this.el.panelAddContact.hide();
     this.el.panelEditProfile.hide();
+  }
+
+  closeRecordMicrophone() {
+    this.el.recordMicrophone.hide();
+    this.el.btnSendMicrophone.show();
+    clearInterval(this._recordMicrophoneInterval);//zera o setInterval, nunca esquecer desse comando!
   }
 
 
