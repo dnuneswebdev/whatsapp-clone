@@ -1,4 +1,7 @@
-class WhatsAppController {
+import {Format} from './../utils/Format';
+import {CameraController} from './CameraController';
+
+export class WhatsAppController {
   constructor() {
     
 
@@ -178,6 +181,7 @@ class WhatsAppController {
     this.el.btnClosePanelCamera.on('click', e => {
       this.closeAllMainPanel();
       this.el.panelMessagesContainer.show();
+      this._camera.stop();
     });
 
     this.el.btnTakePicture.on('click', e => {
@@ -237,7 +241,6 @@ class WhatsAppController {
     // --------------------------------------------------
     // EMOJIS EVENTS
     // --------------------------------------------------
-
     this.el.btnEmojis.on('click', e => {
       this.el.panelEmojis.toggleClass('open')
     });
@@ -296,10 +299,7 @@ class WhatsAppController {
     this.el.btnFinishMicrophone.on('click', e => {
       this.closeRecordMicrophone()
     });
-
-
   }
-
 
   // --------------------------------------------------
   // MICROPHONE TIMER METHOD

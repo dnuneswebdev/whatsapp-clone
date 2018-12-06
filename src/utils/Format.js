@@ -1,4 +1,4 @@
-class Format {
+export class Format {
   
   static getCamelCase(id) {//metodo estático não precisa ser instanciado, ja pode chamar ele direto em qualquer lugar
     let div = document.createElement('div');//essa div foi criada só para gerar o data-set 

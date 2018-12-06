@@ -1,0 +1,25 @@
+{
+  "name": "whatsapp-clone",
+  "version": "1.0.0",
+  "description": "| Webpack | https://webpack.js.org/ |\r | Firebase Authentication | https://firebase.google.com/docs/auth/?authuser=0 |\r | Cloud Firestore | https://firebase.google.com/docs/firestore/?authuser=0 |\r | Cloud Functions | https://firebase.google.com/docs/functions/?hl=pt-br |\r | Cloud Storage | https://firebase.google.com/docs/storage/?authuser=0 |\r | PDF.js | https://mozilla.github.io/pdf.js/ |\r | MediaDevices.getUserMedia() | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia |",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnuneswebdev/whatsapp-clone.git"
+  },
+  "author": "Daniel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dnuneswebdev/whatsapp-clone/issues"
+  },
+  "homepage": "https://github.com/dnuneswebdev/whatsapp-clone#readme",
+  "dependencies": {
+    "webpack": "^3.1.0",
+    "webpack-dev-server": "^2.5.1"
+  }
+}
