@@ -1,5 +1,6 @@
 import {Format} from './../utils/Format';
 import {CameraController} from './CameraController';
+import {MicrophoneController} from './MicrophoneController';
 import {DocumentPreviewController} from './DocumentPreviewController';
 
 export class WhatsAppController {
@@ -231,7 +232,7 @@ export class WhatsAppController {
           this.el.panelDocumentPreview.css({height: 'calc(100% - 120px)'});
         }).catch(err => {
           this.el.panelDocumentPreview.css({height: 'calc(100% - 120px)'});
-          
+
           console.log(file.type)
           switch(file.type) {
             case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
@@ -357,30 +358,31 @@ export class WhatsAppController {
     this.el.btnSendMicrophone.on('click', e => {
       this.el.recordMicrophone.show();
       this.el.btnSendMicrophone.hide();
-      this.startRecordMicrophoneTimer();
+
+      this._microphoneController = new MicrophoneController();
+
+      this._microphoneController.on('ready', audio => {
+        console.log('ready event');
+        this._microphoneController.startRecorder();
+      });
+
+      this._microphoneController.on('recordtimer', timer => {
+        this.el.recordMicrophoneTimer.innerHTML = Format.toTime(timer);
+      });
     });
 
     this.el.btnCancelMicrophone.on('click', e => {
+      this._microphoneController.stopRecorder();
       this.closeRecordMicrophone()
     });
 
     this.el.btnFinishMicrophone.on('click', e => {
+      this._microphoneController.stopRecorder();
       this.closeRecordMicrophone()
     });
   }
 
-  // --------------------------------------------------
-  // MICROPHONE TIMER METHOD
-  // --------------------------------------------------
-  startRecordMicrophoneTimer() {
-    let start = Date.now();//pega a hora atual
-
-    this._recordMicrophoneInterval = setInterval(() => {
-      this.el.recordMicrophoneTimer.innerHTML = Format.toTime(Date.now() - start);
-    }, 1000);
-  }
-
-  // --------------------------------------------------
+   // --------------------------------------------------
   // CLOSE METHODS
   // --------------------------------------------------
   closeAllMainPanel() {
@@ -402,7 +404,6 @@ export class WhatsAppController {
   closeRecordMicrophone() {
     this.el.recordMicrophone.hide();
     this.el.btnSendMicrophone.show();
-    clearInterval(this._recordMicrophoneInterval);//zera o setInterval, nunca esquecer desse comando!
   }
 
 
