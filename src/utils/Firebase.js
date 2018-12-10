@@ -16,17 +16,35 @@ export class Firebase {
   }
 
   init() {
-    if(!this._initialized) {
+    if(!window._initializedFirebase) {
       firebase.initializeApp(this._config);
 
       firebase.firestore().settings({
         timestampsInSnapshots: true
       });
 
-      this._initialized = true;
+      window._initializedFirebase = true;
     }
-    
   } 
+
+  initAuth() {
+    return new Promise((resolve, reject) => {
+      let provider = new firebase.auth.GoogleAuthProvider();
+
+      firebase.auth().signInWithPopup(provider).then(result => {
+        let token = result.credential.accessToken;
+        let user = result.user;
+
+        resolve({
+          user, 
+          token
+        });
+
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  }
 
   static db() {
     return firebase.firestore();
