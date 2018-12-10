@@ -137,7 +137,12 @@ export class WhatsAppController {
     });
 
     this.el.btnSavePanelEditProfile.on('click', e => {
-      console.log(this.el.inputNamePanelEditProfile.innerHTML)//como é uma DIV e não um INPUT, não tem o .value
+      this.el.btnSavePanelEditProfile.disabled = true;
+
+      this._user.name = this.el.inputNamePanelEditProfile.innerHTML//como é uma DIV e não um INPUT, não tem o .value
+      this._user.save().then(() => {
+        this.el.btnSavePanelEditProfile.disabled = false;
+      });
     });
 
     this.el.formPanelAddContact.on('submit', e => {
@@ -416,20 +421,34 @@ export class WhatsAppController {
   // AUTH FIREBASE
   // --------------------------------------------------
   initAuth() {
-    this._firebase.initAuth().then(response =>  {
-      console.log(response);
-      this._user = new User();
+    this._firebase.initAuth().then(response =>  {//obtem as respostas dos dados da autenticação
+      this._user = new User(response.user.email);//passa some o email para a class User
 
-      let userRef = User.findByEmail(response.user.email);
+      this._user.on('dataChange', data => {
+        document.querySelector('title').innerHTML = `${data.name} - WhatsApp CLone`
 
-      userRef.set({
-        name: response.user.displayName,
-        email: response.user.email,
-        photo: response.user.photoURL
-      }).then(() => {
-        this.el.appContent.css({display: 'flex'});
+        this.el.inputNamePanelEditProfile.innerHTML = data.name;
+
+        if(data.photo) {
+          let photo = this.el.imgPanelEditProfile;
+          photo.src = data.photo;
+          photo.show();
+          this.el.imgDefaultPanelEditProfile.hide()
+
+          let photo2 = this.el.myPhoto.querySelector('img');
+          photo2.src = data.photo;
+          photo2.show();
+        }
       })
 
+      this._user.name = response.user.displayName;
+      this._user.email = response.user.email;
+      this._user.photo = response.user.photoURL;
+
+      this._user.save().then(() => {
+        this.el.appContent.css({display: 'flex'});
+      })
+ 
     }).catch(err => {
       console.error(err)
     })
