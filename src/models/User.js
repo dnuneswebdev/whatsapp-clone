@@ -3,7 +3,7 @@ import { Model } from './Model';
 
 export class User extends Model{
   constructor(email) {//traz o email la da promise do whatsappcontroller
-    super();//chama a classe Model
+    super();//chama o constructor da classe Model
 
     if(email) this.getById(email)
   }
@@ -31,19 +31,52 @@ export class User extends Model{
     return User.getRef().doc(email);
   }
 
+  static getContactRef(email) {
+    return User.getRef()
+    .doc(email)
+    .collection('contacts')
+  }
+
   // --------------------------------------------------
   // METHODS
   // --------------------------------------------------
   getById(emailId) {
     return new Promise((resolve, reject) => {
-      User.findByEmail(emailId).onSnapshot(doc => {
+      User.findByEmail(emailId).onSnapshot(doc => {//snapShot fica ouvindo mudanças em tempo real
         this.fromJSON(doc.data())
-        resolve(doc)
+        resolve(doc)//depois que todo a logica é resolvida, volta pra ca pra avisar que deu tudo certo
       });
     })
   }
 
   save() {
     return User.findByEmail(this.email).set(this.toJSON())
+  }
+
+  addContact(contact) {
+    return User.getRef()//pega a referencia no banco
+    .doc(this.email)//pega o usuario que está fazendo a requisição
+    .collection('contacts')//entra na coleção daquele usuario
+    .doc(btoa(contact.email))//pega o email do contato desejado e converte a string em base64 para nao ter problemas
+    .set(contact.toJSON())//set salva la no db
+  }
+
+  getContacts() {
+    return new Promise((resolve, reject) => {
+      User.getContactRef(this.email).onSnapshot(docs => {
+        let contacts = [];
+
+        docs.forEach(doc => {
+          let data = doc.data();
+
+          data.id = doc.id;
+
+          contacts.push(data)
+        });
+        this.trigger('contactsChange', docs);
+
+        resolve(contacts)
+      })
+    });
   }
 }
